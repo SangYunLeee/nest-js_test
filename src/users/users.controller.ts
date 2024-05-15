@@ -7,11 +7,13 @@ import { Get, Param } from '@nestjs/common';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  /*
   @Post()
   createUser(@Body() user: UsersModel): Promise<UsersModel> {
     console.log('user', user);
     return this.usersService.createUser(user);
   }
+  */
 
   @Get(':id')
   getUserById(@Param('id') id: string): Promise<UsersModel> {

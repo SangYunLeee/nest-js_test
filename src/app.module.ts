@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostsModel } from './posts/entities/posts.entitiy';
 import { UsersModule } from './users/users.module';
 import { UsersModel } from './users/entities/users.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -21,8 +22,10 @@ import { UsersModel } from './users/entities/users.entity';
     }),
     PostsModule,
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
+  // Provider 안에 넣는 것들은 오직 해당 모듈에서만 사용할 수 있음 주의
   providers: [AppService],
 })
 export class AppModule {}
