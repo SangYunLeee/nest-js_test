@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Delete, Body, Param } from '@nestjs/common';
 import { PostsService } from './posts.service';
-import { PostsModel } from './entity/posts.entitiy';
+import { PostsModel } from './entities/posts.entitiy';
 
 @Controller('posts')
 export default class PostsController {
@@ -13,6 +13,7 @@ export default class PostsController {
 
   @Post()
   createPost(@Body() post: PostsModel): Promise<PostsModel> {
+    console.log('post', post);
     return this.postsService.createPost(post);
   }
 

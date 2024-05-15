@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { PostsModel } from './entity/posts.entitiy';
+import { PostsModel } from './entities/posts.entitiy';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -11,11 +11,16 @@ export class PostsService {
   ) {}
 
   async getAllPosts() {
-    return this.postsRepository.find();
+    return this.postsRepository.find({
+      relations: ['author'],
+    });
   }
 
   async getPostById(id: number): Promise<PostsModel> {
-    const post = await this.postsRepository.findOne({ where: { id } });
+    const post = await this.postsRepository.findOne({
+      where: { id },
+      relations: ['author'],
+    });
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }

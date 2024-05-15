@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import PostsController from './posts.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PostsModel } from './entity/posts.entitiy';
+import { PostsModel } from './entities/posts.entitiy';
 
 @Module({
   // eslint-disable-next-line prettier/prettier
