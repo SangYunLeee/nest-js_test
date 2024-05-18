@@ -1,6 +1,17 @@
-import { Controller, Get, Post, Delete, Body, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
+} from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PostsModel } from './entities/posts.entitiy';
+import { BearerTokenGuard } from 'src/auth/guard/bearer-token.guard';
+import { User } from 'src/users/decorator/user.decorator';
+import { UsersModel } from 'src/users/entities/users.entity';
 
 @Controller('posts')
 export default class PostsController {
@@ -12,8 +23,12 @@ export default class PostsController {
   }
 
   @Post()
-  createPost(@Body() post: PostsModel): Promise<PostsModel> {
-    console.log('post', post);
+  @UseGuards(BearerTokenGuard)
+  createPost(
+    @Body() post: PostsModel,
+    @User('id') userId: number,
+  ): Promise<PostsModel> {
+    post.author = { id: userId } as UsersModel;
     return this.postsService.createPost(post);
   }
 
@@ -23,6 +38,7 @@ export default class PostsController {
   }
 
   @Delete(':id')
+  @UseGuards(BearerTokenGuard)
   deletePostById(@Param('id') id: string): Promise<void> {
     return this.postsService.deletePostById(+id);
   }
