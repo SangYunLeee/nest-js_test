@@ -7,6 +7,7 @@ import { PostsModel } from './posts/entities/posts.entitiy';
 import { UsersModule } from './users/users.module';
 import { UsersModel } from './users/entities/users.entity';
 import { AuthModule } from './auth/auth.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AuthModule } from './auth/auth.module';
     PostsModule,
     UsersModule,
     AuthModule,
+    CommonModule,
   ],
   controllers: [AppController],
   // Provider 안에 넣는 것들은 오직 해당 모듈에서만 사용할 수 있음 주의
