@@ -1,16 +1,16 @@
-import { Body, Controller, Headers, Post } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersModel } from 'src/users/entities/users.entity';
+import { RefreshTokenGuard } from './guard/bearer-token.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('token/access')
-  postTokenAccess(@Headers('authorization') rawToken: string) {
-    const token = this.authService.extractTokenFromHeader(rawToken, true);
-    const newToken = this.authService.rotateToken(token, false);
-
+  @UseGuards(RefreshTokenGuard)
+  postTokenAccess(@Req() req: { token: string }) {
+    const newToken = this.authService.rotateToken(req.token, false);
     /**
      * {accessToken: {token}}
      */
@@ -20,9 +20,9 @@ export class AuthController {
   }
 
   @Post('token/refresh')
-  postTokenRefresh(@Headers('authorization') rawToken: string) {
-    const token = this.authService.extractTokenFromHeader(rawToken, true);
-    const newToken = this.authService.rotateToken(token, true);
+  @UseGuards(RefreshTokenGuard)
+  postTokenRefresh(@Req() req: { token: string }) {
+    const newToken = this.authService.rotateToken(req.token, true);
     /**
      * {refreshToken: {token}}
      */
