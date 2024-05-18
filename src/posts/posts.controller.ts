@@ -6,12 +6,15 @@ import {
   Body,
   Param,
   UseGuards,
+  Patch,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PostsModel } from './entities/posts.entitiy';
 import { BearerTokenGuard } from 'src/auth/guard/bearer-token.guard';
 import { User } from 'src/users/decorator/user.decorator';
-import { UsersModel } from 'src/users/entities/users.entity';
+import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 @Controller('posts')
 export default class PostsController {
@@ -25,16 +28,23 @@ export default class PostsController {
   @Post()
   @UseGuards(BearerTokenGuard)
   createPost(
-    @Body() post: PostsModel,
+    @Body() post: CreatePostDto,
     @User('id') userId: number,
   ): Promise<PostsModel> {
-    post.author = { id: userId } as UsersModel;
-    return this.postsService.createPost(post);
+    return this.postsService.createPost(post, userId);
   }
 
   @Get(':id')
   getPostById(@Param('id') id: string): Promise<PostsModel> {
     return this.postsService.getPostById(+id);
+  }
+
+  @Patch(':postId')
+  patchPost(
+    @Param('postId', ParseIntPipe) id: number,
+    @Body() body: UpdatePostDto,
+  ) {
+    return this.postsService.updatePost(id, body);
   }
 
   @Delete(':id')

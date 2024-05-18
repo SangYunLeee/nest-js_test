@@ -1,3 +1,4 @@
+import { IsString } from 'class-validator';
 import { BaseModel } from 'src/common/entities/base.entity';
 import { UsersModel } from 'src/users/entities/users.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
@@ -10,9 +11,11 @@ export class PostsModel extends BaseModel {
   author: UsersModel;
 
   @Column()
+  @IsString()
   title: string;
 
   @Column()
+  @IsString()
   content: string;
 
   @Column()
