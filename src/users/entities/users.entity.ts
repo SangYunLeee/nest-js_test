@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import { RolesEnum } from '../const/roles.const';
 import { PostsModel } from 'src/posts/entities/posts.entitiy';
 import { BaseModel } from 'src/common/entities/base.entity';
+import { IsEmail, IsString, Length } from 'class-validator';
 
 @Entity()
 export class UsersModel extends BaseModel {
@@ -9,15 +10,20 @@ export class UsersModel extends BaseModel {
     unique: true,
     length: 20,
   })
+  @IsString()
+  @Length(3, 20)
   nickname: string;
 
   @Column({
     unique: true,
     length: 50,
   })
+  @IsEmail()
   email: string;
 
   @Column()
+  @IsString()
+  @Length(3, 20)
   password: string;
 
   @Column({
