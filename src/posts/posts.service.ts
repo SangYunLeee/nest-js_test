@@ -69,15 +69,15 @@ export class PostsService {
     return newPost;
   }
 
-  async pagenatePosts(dto: PaginatePostDto) {
+  async paginatePosts(dto: PaginatePostDto) {
     if (dto.page) {
-      return this.pagePageinatePosts(dto);
+      return this.pagePaginatePosts(dto);
     } else {
       return this.cursorPaginatePosts(dto);
     }
   }
 
-  async pagePageinatePosts(dto: PaginatePostDto) {
+  async pagePaginatePosts(dto: PaginatePostDto) {
     const [posts, count] = await this.postsRepository.findAndCount({
       order: {
         createdAt: dto.order__createdAt,
