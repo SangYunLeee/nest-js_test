@@ -27,6 +27,7 @@ export default class PostsController {
     return this.postsService.paginatePosts(query);
   }
 
+  // 포스트 생성
   @Post()
   @UseGuards(BearerTokenGuard)
   createPost(
@@ -34,6 +35,12 @@ export default class PostsController {
     @User('id') userId: number,
   ): Promise<PostsModel> {
     return this.postsService.createPost(post, userId);
+  }
+
+  @Post('random')
+  @UseGuards(BearerTokenGuard)
+  createPostRandom(@User('id') userId: number) {
+    return this.postsService.generatePosts(userId);
   }
 
   @Get(':id')

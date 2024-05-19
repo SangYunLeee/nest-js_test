@@ -37,6 +37,8 @@ export class PostsService {
     const post = this.postsRepository.create({
       ...postDto,
       author: { id: authorId },
+      likeCount: 0,
+      commentCount: 0,
     });
     return this.postsRepository.save(post);
   }
@@ -76,5 +78,18 @@ export class PostsService {
       },
       take: dto.take,
     });
+  }
+
+  async generatePosts(userId: number) {
+    for (let i = 0; i < 100; i++) {
+      await this.createPost(
+        {
+          title: `임의 제목: ${i}`,
+          content: `임의 내용:  ${i}`,
+        },
+        userId,
+      );
+    }
+    return true;
   }
 }
