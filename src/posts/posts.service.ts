@@ -71,7 +71,17 @@ export class PostsService {
   }
 
   async paginatePosts(dto: PaginatePostDto) {
-    return this.commonService.paginate(dto, this.postsRepository, {}, 'posts');
+    const overrideOption = {
+      relations: {
+        author: true,
+      },
+    };
+    return this.commonService.paginate(
+      dto,
+      this.postsRepository,
+      overrideOption,
+      'posts',
+    );
   }
 
   async generatePosts(userId: number) {
