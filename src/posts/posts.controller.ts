@@ -24,7 +24,7 @@ export default class PostsController {
 
   @Get()
   getPosts(@Query() query: PaginatePostDto) {
-    return this.postsService.paginatePosts(query);
+    return this.postsService.pagenatePosts(query);
   }
 
   // 포스트 생성

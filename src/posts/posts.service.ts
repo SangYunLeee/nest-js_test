@@ -69,7 +69,27 @@ export class PostsService {
     return newPost;
   }
 
-  async paginatePosts(dto: PaginatePostDto) {
+  async pagenatePosts(dto: PaginatePostDto) {
+    if (dto.page) {
+      return this.pagePageinatePosts(dto);
+    } else {
+      return this.cursorPaginatePosts(dto);
+    }
+  }
+
+  async pagePageinatePosts(dto: PaginatePostDto) {
+    const [posts, count] = await this.postsRepository.findAndCount({
+      order: {
+        createdAt: dto.order__createdAt,
+      },
+      take: dto.take,
+      skip: (dto.page - 1) * dto.take,
+    });
+
+    return { posts, total: count };
+  }
+
+  async cursorPaginatePosts(dto: PaginatePostDto) {
     const where: FindOptionsWhere<PostsModel> = {};
 
     if (dto.where__id__more_than || dto.where__id__less_than) {
