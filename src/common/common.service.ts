@@ -8,7 +8,6 @@ import {
   Repository,
 } from 'typeorm';
 import { FILTER_MAPPER } from './const/filter-mapper.const';
-import { ENV } from './const/env.const';
 
 @Injectable()
 export class CommonService {
@@ -44,7 +43,7 @@ export class CommonService {
         ? results[results.length - 1]
         : null;
 
-    const nextUrl = lastItem && new URL(`${ENV.BASE_URL}/${path}`);
+    const nextUrl = lastItem && new URL(`${process.env.BASE_URL}/${path}`);
 
     if (lastItem) {
       for (const key of Object.keys(dto)) {
