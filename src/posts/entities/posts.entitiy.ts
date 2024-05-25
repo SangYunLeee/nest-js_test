@@ -30,7 +30,8 @@ export class PostsModel extends BaseModel {
     nullable: true,
   })
   @Transform(
-    ({ value }) => value && `${join(process.env.BASE_URL, '/public/temp/', value)}`,
+    ({ value }) =>
+      value && `${join(process.env.BASE_URL, '/public/temp/', value)}`,
   )
   image?: string;
 }
