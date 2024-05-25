@@ -23,4 +23,9 @@ export class PostsModel extends BaseModel {
 
   @Column()
   commentCount: number;
+
+  @Column({
+    nullable: true,
+  })
+  image?: string;
 }
