@@ -8,6 +8,7 @@ import { UsersModule } from 'src/users/users.module';
 import { CommonModule } from 'src/common/common.module';
 import { MulterModule } from '@nestjs/platform-express';
 import * as multer from 'multer';
+import { SERVE_PATH } from 'src/common/const/serve-file.const';
 
 @Module({
   // eslint-disable-next-line prettier/prettier
@@ -31,7 +32,7 @@ import * as multer from 'multer';
       storage: multer.diskStorage({
         destination: (() => {
           console.log(process.cwd());
-          return process.cwd() + '/public/temp';
+          return SERVE_PATH + '/public/temp';
         })(),
         filename: (req, file, cb) => {
           const now = new Date(Date.now());

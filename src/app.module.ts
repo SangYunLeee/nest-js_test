@@ -10,7 +10,8 @@ import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
-
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { SERVE_PATH } from './common/const/serve-file.const';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -31,6 +32,10 @@ import { ConfigModule } from '@nestjs/config';
     UsersModule,
     AuthModule,
     CommonModule,
+    ServeStaticModule.forRoot({
+      rootPath: SERVE_PATH + '/public',
+      serveRoot: '/public',
+    }),
   ],
   controllers: [AppController],
   // Provider 안에 넣는 것들은 오직 해당 모듈에서만 사용할 수 있음 주의

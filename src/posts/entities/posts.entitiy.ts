@@ -1,4 +1,6 @@
+import { Transform } from 'class-transformer';
 import { IsString } from 'class-validator';
+import { join } from 'path';
 import { BaseModel } from 'src/common/entities/base.entity';
 import { UsersModel } from 'src/users/entities/users.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
@@ -27,5 +29,8 @@ export class PostsModel extends BaseModel {
   @Column({
     nullable: true,
   })
+  @Transform(
+    ({ value }) => value && `${join(process.env.BASE_URL, '/public/temp/', value)}`,
+  )
   image?: string;
 }
