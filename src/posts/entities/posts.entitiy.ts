@@ -6,8 +6,9 @@ import {
   PUBLIC_FOLDER_NAME,
 } from 'src/common/const/serve-file.const';
 import { BaseModel } from 'src/common/entities/base.entity';
+import { ImagesModel } from 'src/common/entities/image.entity';
 import { UsersModel } from 'src/users/entities/users.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
 export class PostsModel extends BaseModel {
@@ -30,16 +31,6 @@ export class PostsModel extends BaseModel {
   @Column()
   commentCount: number;
 
-  @Column({
-    nullable: true,
-  })
-  @IsOptional()
-  @IsString()
-  @Transform(
-    ({ value }) =>
-      value &&
-      `${join(process.env.BASE_URL, PUBLIC_FOLDER_NAME, POSTS_FOLDER_NAME, value)}`,
-    { toPlainOnly: true },
-  )
-  image?: string;
+  @OneToMany((type) => ImagesModel, (image) => image.post)
+  images: ImagesModel[];
 }

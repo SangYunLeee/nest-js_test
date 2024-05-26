@@ -17,6 +17,7 @@ import { User } from 'src/users/decorator/user.decorator';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PaginatePostDto } from './dto/paginte-post.dto';
+import { ImageModelType } from 'src/common/entities/image.entity';
 
 @Controller('posts')
 export default class PostsController {
@@ -31,13 +32,21 @@ export default class PostsController {
   @Post()
   @UseGuards(AccessTokenGuard)
   async createPost(
-    @Body() post: CreatePostDto,
+    @Body() postDto: CreatePostDto,
     @User('id') userId: number,
   ): Promise<PostsModel> {
-    if (post.image) {
-      await this.postsService.createImage(post);
+    const post = await this.postsService.createPost(postDto, userId);
+
+    for (let i = 0; i < postDto.images.length; i++) {
+      await this.postsService.createPostImage({
+        path: postDto.images[i],
+        post: post,
+        order: i,
+        type: ImageModelType.POST_IMAGE,
+      });
     }
-    return this.postsService.createPost(post, userId);
+
+    return await this.postsService.getPostById(post.id);
   }
 
   @Post('random')

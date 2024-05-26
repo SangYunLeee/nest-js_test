@@ -8,10 +8,11 @@ import { UsersModule } from 'src/users/users.module';
 import { CommonModule } from 'src/common/common.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { multerOption } from 'src/common/const/multer.const';
+import { ImagesModel } from 'src/common/entities/image.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([PostsModel]),
+    TypeOrmModule.forFeature([PostsModel, ImagesModel]),
     AuthModule,
     UsersModule,
     CommonModule,

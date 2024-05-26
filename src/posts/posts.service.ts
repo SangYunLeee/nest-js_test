@@ -8,29 +8,33 @@ import { PaginatePostDto } from './dto/paginte-post.dto';
 import { CommonService } from 'src/common/common.service';
 import {
   POSTS_FOLDER_PATH,
-  PUBLIC_FOLDER_PATH,
   TEMP_FOLDER_PATH,
 } from 'src/common/const/serve-file.const';
 import { join } from 'path';
 import { promises } from 'fs';
+import { ImagesModel } from 'src/common/entities/image.entity';
+import { CreatePostImageDto } from './images/dto/create-image.dto';
+import { POST_FIND_OPTIONS } from './const/post-find-options';
 @Injectable()
 export class PostsService {
   constructor(
     @InjectRepository(PostsModel)
     private readonly postsRepository: Repository<PostsModel>,
+    @InjectRepository(ImagesModel)
+    private readonly imagesRepository: Repository<ImagesModel>,
     private readonly commonService: CommonService,
   ) {}
 
   async getAllPosts() {
     return this.postsRepository.find({
-      relations: ['author'],
+      ...POST_FIND_OPTIONS,
     });
   }
 
   async getPostById(id: number): Promise<PostsModel> {
     const post = await this.postsRepository.findOne({
+      ...POST_FIND_OPTIONS,
       where: { id },
-      relations: ['author'],
     });
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
@@ -38,17 +42,19 @@ export class PostsService {
     return post;
   }
 
-  async createImage(postDto: CreatePostDto) {
-    const postImagePath = join(TEMP_FOLDER_PATH, postDto.image);
+  async createPostImage(postImgDto: CreatePostImageDto) {
+    if (!postImgDto.path) {
+      return true;
+    }
+    const postImagePath = join(TEMP_FOLDER_PATH, postImgDto.path);
     try {
       await promises.access(postImagePath);
     } catch (error) {
       throw new NotFoundException('이미지를 찾을 수 없습니다.');
     }
-    await promises.rename(
-      postImagePath,
-      join(POSTS_FOLDER_PATH, postDto.image),
-    );
+    const postMovedImagePath = join(POSTS_FOLDER_PATH, postImgDto.path);
+    this.imagesRepository.save(postImgDto);
+    await promises.rename(postImagePath, postMovedImagePath);
     return true;
   }
 
@@ -61,6 +67,7 @@ export class PostsService {
       author: { id: authorId },
       likeCount: 0,
       commentCount: 0,
+      images: [],
     });
     return this.postsRepository.save(post);
   }
@@ -85,21 +92,24 @@ export class PostsService {
       throw new NotFoundException();
     }
 
-    const newPost = await this.postsRepository.save(postDto);
+    if (postDto.title) {
+      post.title = postDto.title;
+    }
+
+    if (postDto.content) {
+      post.content = postDto.content;
+    }
+
+    const newPost = await this.postsRepository.save(post);
 
     return newPost;
   }
 
   async paginatePosts(dto: PaginatePostDto) {
-    const overrideOption = {
-      relations: {
-        author: true,
-      },
-    };
     return this.commonService.paginate(
       dto,
       this.postsRepository,
-      overrideOption,
+      POST_FIND_OPTIONS,
       'posts',
     );
   }
@@ -110,6 +120,7 @@ export class PostsService {
         {
           title: `임의 제목: ${i}`,
           content: `임의 내용:  ${i}`,
+          images: [],
         },
         userId,
       );

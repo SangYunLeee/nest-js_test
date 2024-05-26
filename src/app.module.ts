@@ -12,6 +12,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { SERVE_PATH } from './common/const/serve-file.const';
+import { ImagesModel } from './common/entities/image.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,7 +26,7 @@ import { SERVE_PATH } from './common/const/serve-file.const';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [PostsModel, UsersModel],
+      entities: [PostsModel, UsersModel, ImagesModel],
       synchronize: true,
     }),
     PostsModule,
