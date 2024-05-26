@@ -1,0 +1,2 @@
+# 이걸 해보세요 ~ ㅋㅋㅋ
+curl localhost:3000/public/posts/example.txt

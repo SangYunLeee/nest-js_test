@@ -8,6 +8,7 @@ import {
 import { CommonService } from './common.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
+import { multerOption } from './const/multer.const';
 
 @Controller('common')
 export class CommonController {

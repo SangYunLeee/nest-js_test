@@ -10,7 +10,6 @@ import { MulterModule } from '@nestjs/platform-express';
 import { multerOption } from 'src/common/const/multer.const';
 
 @Module({
-  // eslint-disable-next-line prettier/prettier
   imports: [
     TypeOrmModule.forFeature([PostsModel]),
     AuthModule,
