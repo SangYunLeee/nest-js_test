@@ -9,8 +9,6 @@ import {
   Patch,
   ParseIntPipe,
   Query,
-  UseInterceptors,
-  UploadedFile,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PostsModel } from './entities/posts.entitiy';
@@ -19,7 +17,6 @@ import { User } from 'src/users/decorator/user.decorator';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PaginatePostDto } from './dto/paginte-post.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('posts')
 export default class PostsController {
@@ -33,14 +30,13 @@ export default class PostsController {
   // 포스트 생성
   @Post()
   @UseGuards(AccessTokenGuard)
-  @UseInterceptors(FileInterceptor('image'))
-  createPost(
+  async createPost(
     @Body() post: CreatePostDto,
     @User('id') userId: number,
-    @UploadedFile() image?: Express.Multer.File,
   ): Promise<PostsModel> {
-    post.image = image?.filename;
-    console.log(image);
+    if (post.image) {
+      await this.postsService.createImage(post);
+    }
     return this.postsService.createPost(post, userId);
   }
 

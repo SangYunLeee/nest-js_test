@@ -1,2 +1,2 @@
-# 이걸 해보세요 ~ ㅋㅋㅋ
+# 이걸 호출 시 획득 가능
 curl localhost:3000/public/posts/example.txt

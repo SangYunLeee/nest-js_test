@@ -1,6 +1,5 @@
-import { SERVE_PATH } from './serve-file.const';
+import { SERVE_PATH, TEMP_FOLDER_PATH } from './serve-file.const';
 import * as multer from 'multer';
-import { v4 as uuid } from 'uuid';
 
 export const multerOption = {
   // file size limit 5MB
@@ -16,7 +15,7 @@ export const multerOption = {
   },
   storage: multer.diskStorage({
     destination: (() => {
-      return SERVE_PATH + '/public/temp';
+      return TEMP_FOLDER_PATH;
     })(),
     filename: (req, file, cb) => {
       const now = new Date(Date.now());
@@ -29,7 +28,7 @@ export const multerOption = {
       const formattedDate = `${year}${month}${day}${hours}${minutes}${seconds}`;
       cb(
         null,
-        `${formattedDate}__filename_${req.user.id}__filename_${file.originalname}`,
+        `${formattedDate}__userId_${req.user.id}__filename_${file.originalname}`,
       );
     },
   }),

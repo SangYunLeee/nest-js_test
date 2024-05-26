@@ -15,7 +15,6 @@ import { multerOption } from 'src/common/const/multer.const';
     AuthModule,
     UsersModule,
     CommonModule,
-    MulterModule.register(multerOption),
   ],
   controllers: [PostsController],
   providers: [PostsService],

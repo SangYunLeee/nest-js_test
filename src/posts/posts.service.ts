@@ -6,7 +6,13 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PaginatePostDto } from './dto/paginte-post.dto';
 import { CommonService } from 'src/common/common.service';
-
+import {
+  POSTS_FOLDER_PATH,
+  PUBLIC_FOLDER_PATH,
+  TEMP_FOLDER_PATH,
+} from 'src/common/const/serve-file.const';
+import { join } from 'path';
+import { promises } from 'fs';
 @Injectable()
 export class PostsService {
   constructor(
@@ -30,6 +36,20 @@ export class PostsService {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
     return post;
+  }
+
+  async createImage(postDto: CreatePostDto) {
+    const postImagePath = join(TEMP_FOLDER_PATH, postDto.image);
+    try {
+      await promises.access(postImagePath);
+    } catch (error) {
+      throw new NotFoundException('이미지를 찾을 수 없습니다.');
+    }
+    await promises.rename(
+      postImagePath,
+      join(POSTS_FOLDER_PATH, postDto.image),
+    );
+    return true;
   }
 
   async createPost(
