@@ -1,9 +1,13 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { BaseModel } from './base.entity';
-import { IsEnum, IsIn, IsInt, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { join } from 'path';
-import { BASE_URL, POSTS_FOLDER_NAME, POSTS_FOLDER_PATH, PUBLIC_FOLDER_NAME } from '../const/serve-file.const';
+import {
+  BASE_URL,
+  POSTS_FOLDER_NAME,
+  PUBLIC_FOLDER_NAME,
+} from '../const/serve-file.const';
 import { PostsModel } from 'src/posts/entities/posts.entitiy';
 
 export enum ImageModelType {
