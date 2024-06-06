@@ -19,8 +19,10 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PaginatePostDto } from './dto/paginte-post.dto';
 import { ImageModelType } from 'src/common/entities/image.entity';
-import { DataSource } from 'typeorm';
+import { DataSource, QueryRunner as QR } from 'typeorm';
 import { LogInterceptor } from 'src/common/interceptor/log.interceptor';
+import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
+import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 
 @Controller('posts')
 export default class PostsController {
@@ -38,33 +40,24 @@ export default class PostsController {
   // 포스트 생성
   @Post()
   @UseGuards(AccessTokenGuard)
+  @UseInterceptors(LogInterceptor)
+  @UseInterceptors(TransactionInterceptor)
   async createPost(
     @Body() postDto: CreatePostDto,
     @User('id') userId: number,
+    @QueryRunner() qr: QR,
   ): Promise<PostsModel> {
-    const qr = this.datasource.createQueryRunner();
-    await qr.connect();
-    await qr.startTransaction();
+    const post = await this.postsService.createPost(postDto, userId, qr);
 
-    try {
-      const post = await this.postsService.createPost(postDto, userId, qr);
-
-      for (let i = 0; i < postDto.images.length; i++) {
-        await this.postsService.createPostImage({
-          path: postDto.images[i],
-          post: post,
-          order: i,
-          type: ImageModelType.POST_IMAGE,
-        });
-      }
-      await qr.commitTransaction();
-      return await this.postsService.getPostById(post.id);
-    } catch (e) {
-      await qr.rollbackTransaction();
-      throw e;
-    } finally {
-      await qr.release();
+    for (let i = 0; i < postDto.images.length; i++) {
+      await this.postsService.createPostImage({
+        path: postDto.images[i],
+        post: post,
+        order: i,
+        type: ImageModelType.POST_IMAGE,
+      });
     }
+    return await this.postsService.getPostById(post.id, qr);
   }
 
   @Post('random')
