@@ -9,6 +9,7 @@ import {
   Patch,
   ParseIntPipe,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PostsModel } from './entities/posts.entitiy';
@@ -19,6 +20,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { PaginatePostDto } from './dto/paginte-post.dto';
 import { ImageModelType } from 'src/common/entities/image.entity';
 import { DataSource } from 'typeorm';
+import { LogInterceptor } from 'src/common/interceptor/log.interceptor';
 
 @Controller('posts')
 export default class PostsController {
@@ -28,6 +30,7 @@ export default class PostsController {
   ) {}
 
   @Get()
+  @UseInterceptors(LogInterceptor)
   getPosts(@Query() query: PaginatePostDto) {
     return this.postsService.paginatePosts(query);
   }
