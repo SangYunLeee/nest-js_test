@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 import { PostsModel } from './entities/posts.entitiy';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -25,6 +25,14 @@ export class PostsService {
     private readonly commonService: CommonService,
   ) {}
 
+  getPostRepository(qr?: QueryRunner) {
+    return qr ? qr.manager.getRepository(PostsModel) : this.postsRepository;
+  }
+
+  getImageRepository(qr?: QueryRunner) {
+    return qr ? qr.manager.getRepository(ImagesModel) : this.imagesRepository;
+  }
+
   async getAllPosts() {
     return this.postsRepository.find({
       ...POST_FIND_OPTIONS,
@@ -42,7 +50,8 @@ export class PostsService {
     return post;
   }
 
-  async createPostImage(postImgDto: CreatePostImageDto) {
+  async createPostImage(postImgDto: CreatePostImageDto, qr?: QueryRunner) {
+    const repo = this.getImageRepository(qr);
     if (!postImgDto.path) {
       return true;
     }
@@ -53,7 +62,7 @@ export class PostsService {
       throw new NotFoundException('이미지를 찾을 수 없습니다.');
     }
     const postMovedImagePath = join(POSTS_FOLDER_PATH, postImgDto.path);
-    this.imagesRepository.save(postImgDto);
+    repo.save(postImgDto);
     await promises.rename(postImagePath, postMovedImagePath);
     return true;
   }
@@ -61,15 +70,17 @@ export class PostsService {
   async createPost(
     postDto: CreatePostDto,
     authorId: number,
+    qr?: QueryRunner,
   ): Promise<PostsModel> {
-    const post = this.postsRepository.create({
+    const repo = this.getPostRepository(qr);
+    const post = repo.create({
       ...postDto,
       author: { id: authorId },
       likeCount: 0,
       commentCount: 0,
       images: [],
     });
-    return this.postsRepository.save(post);
+    return repo.save(post);
   }
 
   async deletePostById(id: number): Promise<void> {
