@@ -10,6 +10,7 @@ import {
   ParseIntPipe,
   Query,
   UseInterceptors,
+  UseFilters,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PostsModel } from './entities/posts.entitiy';
@@ -23,6 +24,7 @@ import { DataSource, QueryRunner as QR } from 'typeorm';
 import { LogInterceptor } from 'src/common/interceptor/log.interceptor';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
+import { HttpExceptionFilter } from 'src/common/exception-filter/http.exception-filter';
 
 @Controller('posts')
 export default class PostsController {
@@ -42,6 +44,7 @@ export default class PostsController {
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(LogInterceptor)
   @UseInterceptors(TransactionInterceptor)
+  @UseFilters(HttpExceptionFilter)
   async createPost(
     @Body() postDto: CreatePostDto,
     @User('id') userId: number,
