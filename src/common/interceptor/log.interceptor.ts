@@ -1,6 +1,7 @@
 import {
   CallHandler,
   ExecutionContext,
+  HttpException,
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
@@ -18,18 +19,20 @@ export class LogInterceptor implements NestInterceptor {
       `[REQ] ${myUUID} ${req.originalUrl} ${new Date(now).toLocaleString('ko')}`,
     );
     return next.handle().pipe(
-      catchError(async (e) => {
-        console.log(`[ERR] ${myUUID} ${e}`);
+      catchError(async (e: HttpException) => {
+        console.error(`[ERR] ${myUUID} ${req.originalUrl}`);
+        console.error(`stack: \n ${e.stack}`);
+        console.error(`resp: \n`, e.getResponse());
         console.log(
           `[RES] ${myUUID} ${req.originalUrl} ${new Date().toLocaleString('ko')} ${Date.now() - now}ms`,
         );
         throw e;
       }),
-      tap((observable) =>
+      tap((observable) => {
         console.log(
           `[RES] ${myUUID} ${req.originalUrl} ${new Date().toLocaleString('ko')} ${Date.now() - now}ms`,
-        ),
-      ),
+        );
+      }),
     );
   }
 }

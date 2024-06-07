@@ -44,7 +44,6 @@ export default class PostsController {
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(LogInterceptor)
   @UseInterceptors(TransactionInterceptor)
-  @UseFilters(HttpExceptionFilter)
   async createPost(
     @Body() postDto: CreatePostDto,
     @User('id') userId: number,
