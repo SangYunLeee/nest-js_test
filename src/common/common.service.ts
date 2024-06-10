@@ -14,7 +14,7 @@ export class CommonService {
   paginate<T extends BaseModel>(
     dto: BasePaginationDto,
     repository: Repository<T>,
-    overrideOptions: FindManyOptions<T> = {},
+    overrideOptions: FindManyOptions<T>,
     path: string,
   ) {
     if (dto.page) {
@@ -29,14 +29,24 @@ export class CommonService {
   >(
     dto: PaginationDto,
     repository: Repository<T>,
-    overrideOptions: FindManyOptions<T> = {},
+    overrideOptions: FindManyOptions<T>,
     path: string,
   ) {
-    const findOption = this.composeFindOptions<T>(dto);
-    const results = await repository.find({
-      ...findOption,
-      ...overrideOptions,
-    });
+    const findOptions = this.composeFindOptions<T>(dto);
+    const modifiedOptions = {
+      ...findOptions,
+      where: {
+        ...findOptions.where,
+        ...overrideOptions.where,
+      },
+      order: {
+        ...findOptions.order,
+        ...overrideOptions.order,
+      },
+    };
+    console.log(modifiedOptions);
+
+    const results = await repository.find(modifiedOptions);
 
     const lastItem =
       results.length > 0 && results.length === dto.take
@@ -88,14 +98,21 @@ export class CommonService {
   private async pagePaginate<T extends BaseModel>(
     dto: BasePaginationDto,
     repository: Repository<T>,
-    overrideFindOptions: FindManyOptions<T> = {},
+    overrideOptions: FindManyOptions<T> = {},
   ) {
     const findOptions = this.composeFindOptions<T>(dto);
-
-    const [data, count] = await repository.findAndCount({
+    const modifiedOptions = {
       ...findOptions,
-      ...overrideFindOptions,
-    });
+      where: {
+        ...findOptions.where,
+        ...overrideOptions.where,
+      },
+      order: {
+        ...findOptions.order,
+        ...overrideOptions.order,
+      },
+    };
+    const [data, count] = await repository.findAndCount(modifiedOptions);
 
     return {
       data,

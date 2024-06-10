@@ -5,12 +5,23 @@ import {
   MessageBody,
   WebSocketServer,
   ConnectedSocket,
+  WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { CreateChatDto } from './dto/create-chat-dto';
+import { ChatsService } from './chats.service';
+import { EnterChatDto } from './dto/enter-chat.dto';
+import { CreateChatMessageDto } from './messages/dto/create-chat-message.dto';
+import { ChatMassagesService } from './messages/messages.service';
 @WebSocketGateway({
   namespace: 'chats',
 })
 export class ChatsGateway implements OnGatewayConnection {
+  constructor(
+    private readonly chatsService: ChatsService,
+    private readonly messageService: ChatMassagesService,
+  ) {}
+
   @WebSocketServer()
   server: Server;
 
@@ -18,30 +29,51 @@ export class ChatsGateway implements OnGatewayConnection {
     console.log('Client connected:', client.id);
   }
 
-  @SubscribeMessage('enter_chat')
-  enterChat(
-    @MessageBody() message: number[],
+  @SubscribeMessage('create_chat')
+  async createChat(
+    @MessageBody() message: CreateChatDto,
     @ConnectedSocket() client: Socket,
   ) {
-    for (const chatId of message) {
-      client.join(chatId.toString());
-      console.log('Client joined chat:', chatId);
+    const chat = await this.chatsService.createChat(message);
+    console.log('created chat:', chat);
+    return message;
+  }
+
+  @SubscribeMessage('enter_chat')
+  async enterChat(
+    @MessageBody() enterDto: EnterChatDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    console.log('Client message:', enterDto);
+    try {
+      await Promise.all(
+        enterDto.chatRoomIds.map((chatId) =>
+          this.chatsService.checkChatExist(chatId),
+        ),
+      );
+    } catch (exeption: any) {
+      throw new WsException(exeption.message);
     }
+
+    await client.join(enterDto.chatRoomIds.map((chatId) => chatId.toString()));
   }
 
   @SubscribeMessage('send_message')
-  sendMessage(
-    @MessageBody() message: { message: string; chatId: number },
+  async sendMessage(
+    @MessageBody() dto: CreateChatMessageDto,
     @ConnectedSocket() client: Socket,
   ) {
+    try {
+      await this.chatsService.checkChatExist(dto.chatId);
+    } catch (exeption: any) {
+      throw new WsException(exeption.message);
+    }
+    const message = await this.messageService.createMessage(dto);
     // 나 빼고 모두에게
-    client
-      .to(message.chatId.toString())
-      .emit('receive_message', message.message);
-    console.log('Client message:', message);
+    client.to(message.chat.id.toString()).emit('receive_message', dto.message);
     // 나 포함 모두에게
     this.server
-      .in(message.chatId.toString())
-      .emit('receive_message', message.message);
+      .in(message.chat.id.toString())
+      .emit('receive_message', dto.message);
   }
 }

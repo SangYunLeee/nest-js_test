@@ -1,9 +1,11 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
 import { RolesEnum } from '../const/roles.const';
 import { PostsModel } from 'src/posts/entities/posts.entitiy';
 import { BaseModel } from 'src/common/entities/base.entity';
 import { IsEmail, IsString, Length } from 'class-validator';
 import { Exclude } from 'class-transformer';
+import { ChatsModel } from 'src/chats/entities/chats.entity';
+import { MessagesModel } from 'src/chats/messages/entities/messages.entity';
 
 @Entity()
 export class UsersModel extends BaseModel {
@@ -36,4 +38,10 @@ export class UsersModel extends BaseModel {
 
   @OneToMany(() => PostsModel, (post) => post.author)
   posts: PostsModel[];
+
+  @ManyToMany((type) => ChatsModel, (chat) => chat.users)
+  chats: ChatsModel[];
+
+  @OneToMany(() => MessagesModel, (message) => message.author)
+  messages: MessagesModel[];
 }

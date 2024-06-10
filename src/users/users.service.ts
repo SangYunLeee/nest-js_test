@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersModel } from './entities/users.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -32,6 +32,12 @@ export class UsersService {
 
   async getUserById(id: string): Promise<UsersModel> {
     return this.usersRepository.findOne({ where: { id: +id } });
+  }
+
+  async getUsersByIds(ids: number[]): Promise<UsersModel[]> {
+    return this.usersRepository.find({
+      where: { id: In(ids) },
+    });
   }
 
   async getAllUsers(): Promise<UsersModel[]> {

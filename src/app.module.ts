@@ -14,6 +14,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { SERVE_PATH } from './common/const/serve-file.const';
 import { ImagesModel } from './common/entities/image.entity';
 import { ChatsModule } from './chats/chats.module';
+import { ChatsModel } from './chats/entities/chats.entity';
+import { MessagesModel } from './chats/messages/entities/messages.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -27,7 +29,13 @@ import { ChatsModule } from './chats/chats.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [PostsModel, UsersModel, ImagesModel],
+      entities: [
+        PostsModel,
+        UsersModel,
+        ImagesModel,
+        ChatsModel,
+        MessagesModel,
+      ],
       synchronize: true,
     }),
     PostsModule,
