@@ -17,6 +17,7 @@ import { ChatsModule } from './chats/chats.module';
 import { ChatsModel } from './chats/entity/chats.entity';
 import { MessagesModel } from './chats/messages/entities/messages.entity';
 import { CommentsModule } from './posts/comments/comments.module';
+import { CommentsModel } from './posts/comments/entity/comments.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -36,6 +37,7 @@ import { CommentsModule } from './posts/comments/comments.module';
         ImagesModel,
         ChatsModel,
         MessagesModel,
+        CommentsModel,
       ],
       synchronize: true,
     }),

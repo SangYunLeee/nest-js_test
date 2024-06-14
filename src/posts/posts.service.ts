@@ -77,8 +77,6 @@ export class PostsService {
     const post = repo.create({
       ...postDto,
       author: { id: authorId },
-      likeCount: 0,
-      commentCount: 0,
       images: [],
     });
     return repo.save(post);
@@ -138,5 +136,13 @@ export class PostsService {
       );
     }
     return true;
+  }
+
+  async checkExistPost(id: number) {
+    const post = await this.postsRepository.exists({ where: { id } });
+
+    if (!post) {
+      throw new NotFoundException(`Post with ID ${id} not found`);
+    }
   }
 }

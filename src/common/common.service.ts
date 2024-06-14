@@ -35,6 +35,10 @@ export class CommonService {
     const findOptions = this.composeFindOptions<T>(dto);
     const modifiedOptions = {
       ...findOptions,
+      relations: {
+        ...findOptions.relations,
+        ...overrideOptions.relations,
+      },
       where: {
         ...findOptions.where,
         ...overrideOptions.where,
@@ -43,8 +47,11 @@ export class CommonService {
         ...findOptions.order,
         ...overrideOptions.order,
       },
+      select: {
+        ...findOptions.select,
+        ...overrideOptions.select,
+      },
     };
-    console.log(modifiedOptions);
 
     const results = await repository.find(modifiedOptions);
 
