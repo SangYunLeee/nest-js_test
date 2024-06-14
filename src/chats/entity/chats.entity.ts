@@ -1,5 +1,5 @@
-import { BaseModel } from 'src/common/entities/base.entity';
-import { UsersModel } from 'src/users/entities/users.entity';
+import { BaseModel } from 'src/common/entity/base.entity';
+import { UsersModel } from 'src/users/entity/users.entity';
 import { Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 import { MessagesModel } from '../messages/entities/messages.entity';
 

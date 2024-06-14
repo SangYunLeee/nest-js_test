@@ -8,7 +8,7 @@ import {
   POSTS_FOLDER_NAME,
   PUBLIC_FOLDER_NAME,
 } from '../const/serve-file.const';
-import { PostsModel } from 'src/posts/entities/posts.entitiy';
+import { PostsModel } from 'src/posts/entity/posts.entitiy';
 
 export enum ImageModelType {
   POST_IMAGE,

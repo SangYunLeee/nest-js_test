@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { QueryRunner, Repository } from 'typeorm';
-import { PostsModel } from './entities/posts.entitiy';
+import { PostsModel } from './entity/posts.entitiy';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -12,7 +12,7 @@ import {
 } from 'src/common/const/serve-file.const';
 import { join } from 'path';
 import { promises } from 'fs';
-import { ImagesModel } from 'src/common/entities/image.entity';
+import { ImagesModel } from 'src/common/entity/image.entity';
 import { CreatePostImageDto } from './images/dto/create-image.dto';
 import { POST_FIND_OPTIONS } from './const/post-find-options';
 @Injectable()

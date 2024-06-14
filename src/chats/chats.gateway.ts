@@ -26,7 +26,7 @@ import { SocketExceptionFilter } from 'src/common/exception-filter/socket.except
 import { SocketBearerTokenGuard } from 'src/auth/guard/socket-bearer-token.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { UsersService } from 'src/users/users.service';
-import { UsersModel } from 'src/users/entities/users.entity';
+import { UsersModel } from 'src/users/entity/users.entity';
 @WebSocketGateway({
   namespace: 'chats',
 })

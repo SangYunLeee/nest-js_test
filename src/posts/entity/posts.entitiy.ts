@@ -5,9 +5,9 @@ import {
   POSTS_FOLDER_NAME,
   PUBLIC_FOLDER_NAME,
 } from 'src/common/const/serve-file.const';
-import { BaseModel } from 'src/common/entities/base.entity';
-import { ImagesModel } from 'src/common/entities/image.entity';
-import { UsersModel } from 'src/users/entities/users.entity';
+import { BaseModel } from 'src/common/entity/base.entity';
+import { ImagesModel } from 'src/common/entity/image.entity';
+import { UsersModel } from 'src/users/entity/users.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()

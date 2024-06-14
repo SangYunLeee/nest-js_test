@@ -1,10 +1,10 @@
 import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
 import { RolesEnum } from '../const/roles.const';
-import { PostsModel } from 'src/posts/entities/posts.entitiy';
-import { BaseModel } from 'src/common/entities/base.entity';
+import { PostsModel } from 'src/posts/entity/posts.entitiy';
+import { BaseModel } from 'src/common/entity/base.entity';
 import { IsEmail, IsString, Length } from 'class-validator';
 import { Exclude } from 'class-transformer';
-import { ChatsModel } from 'src/chats/entities/chats.entity';
+import { ChatsModel } from 'src/chats/entity/chats.entity';
 import { MessagesModel } from 'src/chats/messages/entities/messages.entity';
 
 @Entity()

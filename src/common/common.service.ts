@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { BaseModel } from './entities/base.entity';
+import { BaseModel } from './entity/base.entity';
 import { BasePaginationDto } from './dto/base-pagination.dto';
 import {
   FindManyOptions,

@@ -13,13 +13,13 @@ import {
   UseFilters,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
-import { PostsModel } from './entities/posts.entitiy';
+import { PostsModel } from './entity/posts.entitiy';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 import { User } from 'src/users/decorator/user.decorator';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PaginatePostDto } from './dto/paginte-post.dto';
-import { ImageModelType } from 'src/common/entities/image.entity';
+import { ImageModelType } from 'src/common/entity/image.entity';
 import { DataSource, QueryRunner as QR } from 'typeorm';
 import { LogInterceptor } from 'src/common/interceptor/log.interceptor';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';

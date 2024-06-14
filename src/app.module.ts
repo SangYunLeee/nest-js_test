@@ -3,19 +3,20 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PostsModule } from './posts/posts.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PostsModel } from './posts/entities/posts.entitiy';
+import { PostsModel } from './posts/entity/posts.entitiy';
 import { UsersModule } from './users/users.module';
-import { UsersModel } from './users/entities/users.entity';
+import { UsersModel } from './users/entity/users.entity';
 import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { SERVE_PATH } from './common/const/serve-file.const';
-import { ImagesModel } from './common/entities/image.entity';
+import { ImagesModel } from './common/entity/image.entity';
 import { ChatsModule } from './chats/chats.module';
-import { ChatsModel } from './chats/entities/chats.entity';
+import { ChatsModel } from './chats/entity/chats.entity';
 import { MessagesModel } from './chats/messages/entities/messages.entity';
+import { CommentsModule } from './posts/comments/comments.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -47,6 +48,7 @@ import { MessagesModel } from './chats/messages/entities/messages.entity';
       serveRoot: '/public',
     }),
     ChatsModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   // Provider 안에 넣는 것들은 오직 해당 모듈에서만 사용할 수 있음 주의
