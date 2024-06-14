@@ -13,7 +13,12 @@ import { ChatsService } from './chats.service';
 import { EnterChatDto } from './dto/enter-chat.dto';
 import { CreateChatMessageDto } from './messages/dto/create-chat-message.dto';
 import { ChatMassagesService } from './messages/messages.service';
-import { UseFilters, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  UseFilters,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { SocketExceptionFilter } from 'src/common/exception-filter/socket.exception-filter';
 import { SocketBearerTokenGuard } from 'src/auth/guard/socket-bearer-token.guard';
 @WebSocketGateway({
@@ -52,6 +57,8 @@ export class ChatsGateway implements OnGatewayConnection {
     return message;
   }
 
+  @UseFilters(SocketExceptionFilter)
+  @UseGuards(SocketBearerTokenGuard)
   @UsePipes(
     new ValidationPipe({
       transform: true,
@@ -60,7 +67,6 @@ export class ChatsGateway implements OnGatewayConnection {
       forbidNonWhitelisted: true,
     }),
   )
-  @UseFilters(SocketExceptionFilter)
   @SubscribeMessage('enter_chat')
   async enterChat(
     @MessageBody() enterDto: EnterChatDto,
@@ -80,17 +86,30 @@ export class ChatsGateway implements OnGatewayConnection {
     await client.join(enterDto.chatRoomIds.map((chatId) => chatId.toString()));
   }
 
+  @UseFilters(SocketExceptionFilter)
+  @UseGuards(SocketBearerTokenGuard)
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
   @SubscribeMessage('send_message')
   async sendMessage(
     @MessageBody() dto: CreateChatMessageDto,
-    @ConnectedSocket() client: Socket,
+    @ConnectedSocket() client: Socket & { user: { id: number } },
   ) {
     try {
       await this.chatsService.checkChatExist(dto.chatId);
     } catch (exeption: any) {
       throw new WsException(exeption.message);
     }
-    const message = await this.messageService.createMessage(dto);
+    const message = await this.messageService.createMessage(
+      dto,
+      client.user.id,
+    );
     // 나 빼고 모두에게
     client.to(message.chat.id.toString()).emit('receive_message', dto.message);
     // 나 포함 모두에게

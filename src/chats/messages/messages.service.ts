@@ -29,11 +29,11 @@ export class ChatMassagesService {
     );
   }
 
-  async createMessage(dto: CreateChatMessageDto) {
+  async createMessage(dto: CreateChatMessageDto, authorId: number) {
     const message = await this.chatMessagesRepository.save({
       message: dto.message,
       chat: { id: dto.chatId },
-      author: { id: dto.authorId },
+      author: { id: authorId },
     });
 
     console.log('message:', message);
