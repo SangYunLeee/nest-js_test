@@ -6,15 +6,29 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 import { UsersService } from 'src/users/users.service';
+import { Reflector } from '@nestjs/core';
+import { IS_PUBLIC_KEY } from 'src/common/decorator/is-public.decorator';
 
 @Injectable()
 export class BearerTokenGuard implements CanActivate {
   constructor(
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
+    private readonly reflector: Reflector,
   ) {}
 
+  getTokenType() {
+    return 'none';
+  }
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const isPublic = this.reflector.getAllAndOverride(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (isPublic) {
+      return true;
+    }
     const req = context.switchToHttp().getRequest();
     const rawToken = req.headers['authorization'];
 
@@ -38,30 +52,25 @@ export class BearerTokenGuard implements CanActivate {
     req.token = token;
     req.tokenType = result.type;
 
+    if (req.tokenType !== this.getTokenType()) {
+      throw new UnauthorizedException(
+        `${this.getTokenType()} Token이 아닙니다.`,
+      );
+    }
     return true;
   }
 }
 
 @Injectable()
 export class AccessTokenGuard extends BearerTokenGuard {
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    await super.canActivate(context);
-    return checkTokenType('access', context);
+  getTokenType() {
+    return 'access';
   }
 }
 
 @Injectable()
 export class RefreshTokenGuard extends BearerTokenGuard {
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    await super.canActivate(context);
-    return checkTokenType('refresh', context);
+  getTokenType() {
+    return 'refresh';
   }
-}
-
-function checkTokenType(type: 'access' | 'refresh', context: ExecutionContext) {
-  const req = context.switchToHttp().getRequest();
-  if (req.tokenType !== type) {
-    throw new UnauthorizedException(`${type} Token이 아닙니다.`);
-  }
-  return true;
 }

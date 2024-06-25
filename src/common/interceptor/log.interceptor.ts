@@ -22,7 +22,6 @@ export class LogInterceptor implements NestInterceptor {
       catchError(async (e: HttpException) => {
         console.error(`[ERR] ${myUUID} ${req.originalUrl}`);
         console.error(`stack: \n ${e.stack}`);
-        console.error(`resp: \n`, e.getResponse());
         console.log(
           `[RES] ${myUUID} ${req.originalUrl} ${new Date().toLocaleString('ko')} ${Date.now() - now}ms`,
         );

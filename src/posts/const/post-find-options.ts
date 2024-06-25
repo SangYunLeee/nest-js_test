@@ -9,5 +9,8 @@ export const POST_FIND_OPTIONS: FindManyOptions<PostsModel> = {
     createdAt: true,
     updatedAt: true,
   },
-  relations: ['images', 'author'],
+  relations: {
+    images: true,
+    author: true,
+  },
 };

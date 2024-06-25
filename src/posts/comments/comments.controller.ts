@@ -15,10 +15,10 @@ import { CommentsService } from './comments.service';
 import { LogInterceptor } from 'src/common/interceptor/log.interceptor';
 import { PaginateCommentDto } from './dto/paginte-comment.dto';
 import { CommentsModel } from './entity/comments.entity';
-import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 import { User } from 'src/users/decorator/user.decorator';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { IsPublic } from 'src/common/decorator/is-public.decorator';
 
 @Controller('posts/:postId/comments')
 export class CommentsController {
@@ -38,6 +38,7 @@ export class CommentsController {
    */
 
   @Get()
+  @IsPublic()
   @UseInterceptors(LogInterceptor)
   getComments(
     @Param('postId', ParseIntPipe) postId: number,
@@ -47,12 +48,12 @@ export class CommentsController {
   }
 
   @Get(':id')
+  @IsPublic()
   getCommentById(@Param('id') id: string): Promise<CommentsModel> {
     return this.commentsService.getCommentById(+id);
   }
 
   @Post()
-  @UseGuards(AccessTokenGuard)
   createComment(
     @Body() commentDto: CreateCommentDto,
     @Param('postId', ParseIntPipe) postId: number,
@@ -62,7 +63,6 @@ export class CommentsController {
   }
 
   @Patch(':id')
-  @UseGuards(AccessTokenGuard)
   updateComment(
     @Body() commentDto: UpdateCommentDto,
     @Param('id', ParseIntPipe) id: number,
@@ -72,7 +72,6 @@ export class CommentsController {
   }
 
   @Delete(':id')
-  @UseGuards(AccessTokenGuard)
   deleteComment(
     @Param('id', ParseIntPipe) id: number,
     @User('id') userId: number,

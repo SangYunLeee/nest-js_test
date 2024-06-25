@@ -14,7 +14,6 @@ import {
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PostsModel } from './entity/posts.entitiy';
-import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 import { User } from 'src/users/decorator/user.decorator';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -24,7 +23,9 @@ import { DataSource, QueryRunner as QR } from 'typeorm';
 import { LogInterceptor } from 'src/common/interceptor/log.interceptor';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
-import { HttpExceptionFilter } from 'src/common/exception-filter/http.exception-filter';
+import { Roles } from 'src/users/decorator/role.decorator';
+import { RolesEnum } from 'src/users/const/roles.const';
+import { IsPublic } from 'src/common/decorator/is-public.decorator';
 
 @Controller('posts')
 export default class PostsController {
@@ -35,13 +36,13 @@ export default class PostsController {
 
   @Get()
   @UseInterceptors(LogInterceptor)
+  @IsPublic()
   getPosts(@Query() query: PaginatePostDto) {
     return this.postsService.paginatePosts(query);
   }
 
   // 포스트 생성
   @Post()
-  @UseGuards(AccessTokenGuard)
   @UseInterceptors(LogInterceptor)
   @UseInterceptors(TransactionInterceptor)
   async createPost(
@@ -63,12 +64,12 @@ export default class PostsController {
   }
 
   @Post('random')
-  @UseGuards(AccessTokenGuard)
   createPostRandom(@User('id') userId: number) {
     return this.postsService.generatePosts(userId);
   }
 
   @Get(':id')
+  @IsPublic()
   getPostById(@Param('id') id: string): Promise<PostsModel> {
     return this.postsService.getPostById(+id);
   }
@@ -82,7 +83,7 @@ export default class PostsController {
   }
 
   @Delete(':id')
-  @UseGuards(AccessTokenGuard)
+  @Roles(RolesEnum.ADMIN)
   deletePostById(@Param('id') id: string): Promise<void> {
     return this.postsService.deletePostById(+id);
   }
