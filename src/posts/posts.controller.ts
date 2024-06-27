@@ -68,9 +68,9 @@ export default class PostsController {
     return this.postsService.generatePosts(userId);
   }
 
-  @Get(':id')
+  @Get(':postId')
   @IsPublic()
-  getPostById(@Param('id') id: string): Promise<PostsModel> {
+  getPostById(@Param('postId') id: string): Promise<PostsModel> {
     return this.postsService.getPostById(+id);
   }
 
@@ -82,9 +82,9 @@ export default class PostsController {
     return this.postsService.updatePost(id, body);
   }
 
-  @Delete(':id')
+  @Delete(':postId')
   @Roles(RolesEnum.ADMIN)
-  deletePostById(@Param('id') id: string): Promise<void> {
+  deletePostById(@Param('postId') id: string): Promise<void> {
     return this.postsService.deletePostById(+id);
   }
 }

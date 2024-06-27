@@ -145,4 +145,15 @@ export class PostsService {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
   }
+
+  async isPostMine(postId: number, userId: number) {
+    const exist = await this.postsRepository.exists({
+      where: {
+        id: postId,
+        author: { id: userId },
+      },
+      relations: ['author'],
+    });
+    return exist;
+  }
 }

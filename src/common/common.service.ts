@@ -35,6 +35,7 @@ export class CommonService {
     const findOptions = this.composeFindOptions<T>(dto);
     const modifiedOptions = {
       ...findOptions,
+      ...overrideOptions,
       relations: {
         ...findOptions.relations,
         ...overrideOptions.relations,
@@ -110,6 +111,11 @@ export class CommonService {
     const findOptions = this.composeFindOptions<T>(dto);
     const modifiedOptions = {
       ...findOptions,
+      ...overrideOptions,
+      relations: {
+        ...findOptions.relations,
+        ...overrideOptions.relations,
+      },
       where: {
         ...findOptions.where,
         ...overrideOptions.where,
